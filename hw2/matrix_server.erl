@@ -8,6 +8,12 @@
 
 
 mult(Mat1, Mat2) ->
-	Mat1_C = tuple_size(Mat1),
-	Mat2_R = tuple_size(element(1, Mat2)),
-	io:format("~p,~p~n", [Mat1_R, Mat2_C]).
+	Mat1_R = tuple_size(element(1, Mat1)),
+	Mat2_C = tuple_size(Mat2),
+	io:format("~p,~p~n", [Mat1_R, Mat2_C]),
+	
+	Mat2 = lists:flatmap(tuple_to_list, Mat2),
+	Mat2.
+	%tuple_to_list(Mat1).
+	
+	
