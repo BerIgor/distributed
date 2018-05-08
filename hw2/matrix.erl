@@ -1,16 +1,18 @@
 -module(matrix).
--export([test/0]).
--export([mat_get_col/2]).
+-compile(export_all).
 
-test() ->
-	Mat1 = {{1,2,3},{4,5,6},{7,8,9}},
-	mat_get_col(Mat1, 2).
+% generate a matrix with X rows and Y columns with zeros
+getZeroMat(X,Y) ->
+	list_to_tuple([list_to_tuple([0 || _Y <- lists:seq(1,Y)]) || _X <- lists:seq(1,X)]).
 
-%Mat is a tuple of tuples
-mat_get_col(Mat, Col_num) ->
-	mat_get_col2(tuple_to_list(Mat), Col_num, []).
+% return the ROW row of a Matrix in a tuple format
+getRow(Mat,Row) ->
+	element(Row,Mat).
 
-mat_get_col2([Curr_row | Mat], Col_num, Col) ->
-	Current_element = element(Col_num, Curr_row),
-	_ = lists:append(Col, [Current_element]),
-	mat_get_col2(Mat, Col_num, Col).
+% return the COL col of a Matrix in a tuple format
+getCol(Mat,Col) ->
+	list_to_tuple([element(Col,ColData) || ColData <- tuple_to_list(Mat)]).
+
+% return a new Matrix which is a copy of OldMat with a NewVal as the value of Row,Col
+setElementMat(Row,Col,OldMat, NewVal) ->
+	setelement (Row,OldMat ,setelement (Col,element(Row,OldMat),NewVal)).

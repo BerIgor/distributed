@@ -3,14 +3,23 @@
 -import(lists,[append/2]).
 
 -export([multVectors/2]).
+-export([getRowVec/2]).
 -export([getColumnVec/2]).
+-export([getMultMatrixElement/4]).
 
 
-multVectors(TupleVec1,TupleVec2) when is_tuple(TupleVec1) == true , is_tuple(TupleVec1) == true , tuple_size(TupleVec1) == tuple_size(TupleVec2) ->
-	multVectors(tuple_to_list(TupleVec1),tuple_to_list(TupleVec2),0).
+
+getMultMatrixElement(Row,Column,Matrix1,Matrix2) ->
+	multVectors(getRowVec(Row,Matrix1), getColumnVec(Column,Matrix2)).
+
+
+multVectors(ListVec1,ListVec2) when is_list(ListVec1) == true , is_list(ListVec2) == true , length(ListVec1) == length(ListVec2) ->
+	multVectors(ListVec1,ListVec2,0).
 multVectors([Head1|List1], [Head2|List2], Sum) -> multVectors(List1, List2, Sum + Head1*Head2);
 multVectors([],[],Sum) -> Sum.
 
+getRowVec(Index,Matrix) when is_tuple(Matrix) == true ->
+	tuple_to_list(element(Index,Matrix)).
 
 getColumnVec(Index,Matrix) when is_tuple(Matrix) == true ->
 	ListOfRowTuples = tuple_to_list(Matrix),
