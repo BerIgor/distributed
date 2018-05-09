@@ -4,12 +4,12 @@
 
 
 matrix_server_start() ->
-	io:format("hello from matrix_server_start ~p~n", [self()]),
 	process_flag(trap_exit, true),
 	Server_pid = spawn_link(matrix_server, loop, []),
 	register(matrix_server, Server_pid),
 	receive
 		{'EXIT', Server_pid, normal} -> ok;
 		{'EXIT', Server_pid, shutdown} -> ok;
-		{'EXIT', Server_pid, _} -> matrix_server_start()
+		{'EXIT', Server_pid, _} -> 
+			matrix_server_start()
 	end.

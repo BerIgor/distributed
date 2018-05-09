@@ -8,10 +8,24 @@
 
 
 start() ->
+	spawn(matrix_server, start_server, []).
+
+start2() ->
 	compile:file(matrix_server),
 	compile:file(matrix_server_supervisor),
 	compile:file(matrix),
 	compile:file(vectors),
+	
+	code:purge(matrix_server),
+	code:purge(matrix_server_supervisor),
+	code:purge(matrix),
+	code:purge(vectors),
+	
+	code:load_file(matrix_server),
+	code:load_file(matrix_server_supervisor),
+	code:load_file(matrix),
+	code:load_file(vectors),
+	
 	spawn(matrix_server, start_server, []).
 
 	
@@ -21,8 +35,8 @@ mult()->
 	Mat2 = {{1,5,6},{2,5,6},{3,5,6}},
 	matrix_server ! {self(), 10, {multiple, Mat1, Mat2}},
 	receive
-		{10, Result} ->
-			io:format("Goodbye from foo ~p~n",[self()]),
+		{MsgRef, Result} ->
+			io:format("test:mult got message from MsgRef==~p~n",[MsgRef]),
 			Result
 	end.
 
