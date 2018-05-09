@@ -5,7 +5,7 @@
 
 % Returns the element at (Row,Column) in the Matrix1*Matrix2 result matrix
 getMultMatrixElement(From, Row,Column,Matrix1,Matrix2) ->
-	io:format("Hello from getMultMatrixElement~n"),
+	io:format("Hello from getMultMatrixElement ~p~n", [self()]),
 	Sum = multVectors(tuple_to_list(matrix:getRow(Matrix1, Row)), tuple_to_list(matrix:getCol(Matrix2, Column))),
 	From ! {Row, Column, Sum}.
 

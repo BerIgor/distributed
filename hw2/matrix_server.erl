@@ -1,4 +1,5 @@
 -module(matrix_server).
+
 -export([start_server/0]).
 %-export([shut_down/0]).
 -export([mult/2]).
@@ -11,7 +12,7 @@ start_server() ->
 
 
 mult(Mat1, Mat2) ->
-	io:format("hello from mult~p~n", [self()]),
+	io:format("hello from mult ~p~n", [self()]),
 	ResMat_RowCount = tuple_size(Mat1),
 	ResMat_ColCount = tuple_size(element(1, Mat2)),
 	ZeroMat = matrix:getZeroMat(ResMat_RowCount, ResMat_ColCount),
@@ -43,29 +44,34 @@ assemble_matrix_loop(Mat, Element_count, Parent_pid) ->
 
 
 restarter() ->
+	io:format("hello from restarter ~p~n", [self()]),
 	process_flag(trap_exit, true),
-	Pid = spawn_link(?MODULE, loop, []),
-	register(matrix_server, Pid),
+	%Server_pid = spawn_link(?MODULE, loop, []),
+	Server_pid = spawn_link(fun()->loop() end),
+	register(matrix_server, Server_pid),
 	receive
-		{'EXIT', Pid, normal} -> fuck; %TODO: RETURN WHAT?
-		{'EXIT', Pid, shutdown} -> fuck; %TODO: RETURN WHAT?
-		{'EXIT', Pid, _} -> restarter()
+		{'EXIT', Server_pid, normal} -> fuck; %TODO: RETURN WHAT?
+		{'EXIT', Server_pid, shutdown} -> fuck; %TODO: RETURN WHAT?
+		{'EXIT', Server_pid, _} -> fuck %restarter()
 	end.
 
 
 loop() ->
+	io:format("hello from loop ~p~n", [self()]),
 	receive
 		{Pid, MsgRef, {multiple, Mat1, Mat2}} -> % multiplication request
 			Pid ! {MsgRef, mult(Mat1, Mat2)},
 			loop();
 		shutdown -> % perform shutdown
+			void;
 			%TODO: FINISH
-			loop();
 		{Pid, MsgRef, get_version} -> % return current version
 			%TODO: FINISH
 			loop();
 		sw_upgrade -> % update software
 			%TODO: FINISH
 			loop()
+		after 10000 -> %TODO: REMOVE THIS TIMEOUT?
+			io:format("Timeout~n")
 	end.
 
