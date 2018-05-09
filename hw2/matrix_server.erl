@@ -1,16 +1,15 @@
 -module(matrix_server).
 
 -export([start_server/0]).
-%-export([shut_down/0]).
+-export([shutdown/0]).
 -export([mult/2]).
-%-export([get_version/0]).
+-export([get_version/0]).
 %-export([explanation/0]).
-%-export([assemble_matrix_loop/3]).
 -export([loop/0]). %TODO: FIND ANOTHER WAY
 
 start_server() ->
+	io:format("Server starting ~p~n", [self()]),
 	matrix_server_supervisor:matrix_server_start().
-
 
 mult(Mat1, Mat2) ->
 	io:format("hello from mult ~p~n", [self()]),
@@ -28,7 +27,14 @@ mult(Mat1, Mat2) ->
 		after 6000 -> %TODO: REMOVE THIS TIMEOUT?
 			io:format("Timeout~n")
 	end.
+	
+	
+get_version() ->
+	version_1.
 
+	
+shutdown() ->
+	exit(self(), shutdown).
 
 %%%%%%%%%%%%%%%%%%%%%%%% Private functions
 
@@ -51,13 +57,21 @@ loop() ->
 			Pid ! {MsgRef, mult(Mat1, Mat2)},
 			loop();
 		shutdown -> % perform shutdown
-			io:format("goodbye from loop ~p~n", [self()]);
+			io:format("shutdown shutdown form loop ~p~n", [self()]),
+			shutdown();
+%%%% TEST		
+		fail -> % perform shutdown
+			io:format("shutdown shutdown form loop ~p~n", [self()]),
+			exit(self(), fail);
+%%%% TEST			
 		{Pid, MsgRef, get_version} -> % return current version
-			%TODO: FINISH
+			Pid ! {MsgRef, get_version()},
 			loop();
 		sw_upgrade -> % update software
-			%TODO: FINISH
-			loop()
+			io:format("Upgrading~n", []),
+			%compile:file(matrix_server),
+			%code:load_file(matrix_server),
+			?MODULE:loop()
 		after 60000 -> %TODO: REMOVE THIS TIMEOUT?
 			io:format("Timeout~n")
 	end.
