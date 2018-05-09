@@ -6,9 +6,10 @@
 %-export([get_version/0]).
 %-export([explanation/0]).
 %-export([assemble_matrix_loop/3]).
+-export([loop/0]). %TODO: FIND ANOTHER WAY
 
 start_server() ->
-	restarter().
+	matrix_server_supervisor:matrix_server_start().
 
 
 mult(Mat1, Mat2) ->
@@ -43,19 +44,6 @@ assemble_matrix_loop(Mat, Element_count, Parent_pid) ->
 	end.
 
 
-restarter() ->
-	io:format("hello from restarter ~p~n", [self()]),
-	process_flag(trap_exit, true),
-	%Server_pid = spawn_link(?MODULE, loop, []),
-	Server_pid = spawn_link(fun()->loop() end),
-	register(matrix_server, Server_pid),
-	receive
-		{'EXIT', Server_pid, normal} -> fuck; %TODO: RETURN WHAT?
-		{'EXIT', Server_pid, shutdown} -> fuck; %TODO: RETURN WHAT?
-		{'EXIT', Server_pid, _} -> fuck %restarter()
-	end.
-
-
 loop() ->
 	io:format("hello from loop ~p~n", [self()]),
 	receive
@@ -63,15 +51,14 @@ loop() ->
 			Pid ! {MsgRef, mult(Mat1, Mat2)},
 			loop();
 		shutdown -> % perform shutdown
-			void;
-			%TODO: FINISH
+			io:format("goodbye from loop ~p~n", [self()]);
 		{Pid, MsgRef, get_version} -> % return current version
 			%TODO: FINISH
 			loop();
 		sw_upgrade -> % update software
 			%TODO: FINISH
 			loop()
-		after 10000 -> %TODO: REMOVE THIS TIMEOUT?
+		after 60000 -> %TODO: REMOVE THIS TIMEOUT?
 			io:format("Timeout~n")
 	end.
 
