@@ -1,5 +1,6 @@
 -module(test).
 -export([start/0]).
+-export([start2/0]).
 -export([mult/0]).
 -export([version/0]).
 -export([upgrade/0]).
