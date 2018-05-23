@@ -34,7 +34,7 @@ get_version() ->
 	version_1.
 
 shutdown() ->
-	exit(self(), shutdown).
+	matrix_server ! shutdown.
 
 explanation() ->
 	{"Module's code can be current or old. Meaning, when updating (compiling + loading) to new code, then: the old code is DELETED, the current BECOMES OLD and the new code BECOMES CURRENT. Processes running deleted code are TERMINATED. So, if supervisor will be in same module as the server, then when the server will be updated more than once the first code version will be DELETED and the supervisor process will be TERMINATED (running first code version)"}.
@@ -49,7 +49,7 @@ loop() ->
 			Pid ! {MsgRef, get_version()},
 			loop();
 		shutdown -> % perform shutdown
-			shutdown();
+			exit(self(), shutdown);
 		sw_upgrade -> % update software
 			?MODULE:loop()
 	end.

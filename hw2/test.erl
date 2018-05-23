@@ -9,7 +9,7 @@
 
 
 start() ->
-	spawn(matrix_server, start_server, []).
+	matrix_server:start_server().
 
 start2() ->
 	compile:file(matrix_server),
