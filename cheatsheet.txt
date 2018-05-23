@@ -1,0 +1,5 @@
+Get current directory:
+	filename:absname("").
+
+Change directory in Windows:
+	cd("C://GitProjects/distributed").
