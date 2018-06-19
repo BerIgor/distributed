@@ -6,27 +6,24 @@
 -export([calc_fun_and_respond/3]).
 
 start_link(Name)->
-	io:format("funServer starting~n"),
-	gen_server:start_link({local, Name}, ?MODULE, [], []).
+	gen_server:start_link({local, Name}, funServer, [], []).
 
 init([])->
 	process_flag(trap_exit, true),
 	State = 0,
 	{ok, State}.
 
-handle_call(number_of_funs, _From, State)->
+handle_call({number_of_funs}, _From, State)->
 	{reply, State, State};
 handle_call({PID, Function, MsgRef}, _From, State)->
 	spawn_link(?MODULE, calc_fun_and_respond, [PID, Function, MsgRef]),
-	State = State + 1,
-	ok.
+	{reply, ok, State + 1}.
 
 handle_cast(_Msg, State)-> {noreply, State}.
 
 % When a child process exits, it sends us a message of the tuple below
 handle_info({'EXIT',_PID,_Reason}, State)->
-	State = State - 1,
-	{noreply, State};
+	{noreply, State - 1};
 handle_info(_Info, State)->{noreply, State}.
 terminate(_Reason, _State)-> ok.
 code_change(_OldVsn, State, _Extra)-> {ok, State}.
