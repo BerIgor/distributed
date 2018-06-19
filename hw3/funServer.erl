@@ -12,11 +12,12 @@ init([])->
 	{ok, State}.
 
 handle_call({number_of_funs}, From, State)->
-	{reply, {number_of_funs, State}, State}.
+	{reply, State, State}.
 
 handle_call({PID, Function, MsgRef}, From, State)->
 	spawn_link(?MODULE, calc_fun_and_respond, [PID, Function, MsgRef]),
-	State = State + 1.
+	State = State + 1,
+	ok.
 
 handle_cast(_Msg, State) -> {noreply, State}.
 handle_info(_Info, State) -> {noreply, State}.

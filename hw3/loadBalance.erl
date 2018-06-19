@@ -18,12 +18,25 @@ numberOfRunningFunctions(ServerNumber)->
 		_ ->
 			exit(self(), normal)
 	end,
+	gen_server:call(Server, {number_of_funs}).
+
+calcFun(PID, Function, MsgRef)->
+	Server = getLeastBusyServer(),
+	gen_server:call(Server, {PID, Function, MsgRef}).
 	
-	Server ! {self(), number_of_funs},
-	receive
-		Pattern1 [when GuardSeq1] ->
-			Body1;
-	after
-		ExprT ->
-			BodyT
-	end
+%%%%%%%
+
+getLeastBusyServer()->
+	Server1_count = numberOfRunningFunctions(1),
+	Server2_count = numberOfRunningFunctions(2),
+	Server3_count = numberOfRunningFunctions(3),
+	
+	if
+	Server1_count <= Server2_count andalso Server1_count <= Server3_count ->
+		server1;
+	Server2_count <= Server1_count andalso Server2_count <= Server3_count ->
+		server2;
+	true ->
+		server3
+	end.
+	
