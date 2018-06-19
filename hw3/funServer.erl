@@ -20,7 +20,12 @@ handle_call({PID, Function, MsgRef}, From, State)->
 	ok.
 
 handle_cast(_Msg, State)-> {noreply, State}.
-handle_info(_Info, State)-> {noreply, State}.
+
+% When a child process exits, it sends us a message of the tuple below
+handle_info({'EXIT',_PID,_Reason}, State)->
+	State = State - 1,
+	{noreply, State};
+handle_info(_Info, State)->{noreply, State}.
 terminate(_Reason, _State)-> ok.
 code_change(_OldVsn, State, Extra)-> {ok, State}.
 
@@ -28,5 +33,4 @@ code_change(_OldVsn, State, Extra)-> {ok, State}.
 %%%%%%%%
 calc_fun_and_respond(PID, Function, MsgRef)->
 	Result = Function(),
-	State = State - 1,
 	PID ! {MsgRef, Result}.
