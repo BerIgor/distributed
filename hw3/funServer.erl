@@ -3,6 +3,7 @@
 
 -export([start_link/1]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,terminate/2, code_change/3]).
+-export([calc_fun_and_respond/3]).
 
 start_link(Name)->
 	gen_server:start_link({local, Name}, ?MODULE, [], []).
@@ -12,9 +13,9 @@ init([])->
 	State = 0,
 	{ok, State}.
 
-handle_call(number_of_funs, From, State)->
+handle_call(number_of_funs, _From, State)->
 	{reply, State, State};
-handle_call({PID, Function, MsgRef}, From, State)->
+handle_call({PID, Function, MsgRef}, _From, State)->
 	spawn_link(?MODULE, calc_fun_and_respond, [PID, Function, MsgRef]),
 	State = State + 1,
 	ok.
@@ -27,7 +28,7 @@ handle_info({'EXIT',_PID,_Reason}, State)->
 	{noreply, State};
 handle_info(_Info, State)->{noreply, State}.
 terminate(_Reason, _State)-> ok.
-code_change(_OldVsn, State, Extra)-> {ok, State}.
+code_change(_OldVsn, State, _Extra)-> {ok, State}.
 
 
 %%%%%%%%
