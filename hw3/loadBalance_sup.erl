@@ -2,11 +2,11 @@
 -behaviour(supervisor).
 -export([start_link/0, init/1]).
 
-start_link() ->
+start_link()->
 	% starts the supervisor on the local machine with with registered name ?MODULE (loadBalance_sup)
 	supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
-init([]) ->
+init([])->
 	Server1 = {server1,{fun_server, start_link, [server1]},permanent, brutal_kill, worker, [fun_server]},
 	Server2 = {server2,{fun_server, start_link, [server2]},permanent, brutal_kill, worker, [fun_server]},
 	Server3 = {server3,{fun_server, start_link, [server3]},permanent, brutal_kill, worker, [fun_server]},
