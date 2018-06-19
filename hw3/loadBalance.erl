@@ -32,9 +32,9 @@ getLeastBusyServer()->
 	Server3_count = numberOfRunningFunctions(3),
 	
 	if
-	Server1_count <= Server2_count andalso Server1_count <= Server3_count ->
+	Server1_count =< Server2_count andalso Server1_count =< Server3_count ->
 		server1;
-	Server2_count <= Server1_count andalso Server2_count <= Server3_count ->
+	Server2_count =< Server1_count andalso Server2_count =< Server3_count ->
 		server2;
 	true ->
 		server3
