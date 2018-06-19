@@ -6,6 +6,7 @@
 -export([calc_fun_and_respond/3]).
 
 start_link(Name)->
+	io:format("funServer starting~n"),
 	gen_server:start_link({local, Name}, ?MODULE, [], []).
 
 init([])->
