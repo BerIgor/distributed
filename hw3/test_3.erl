@@ -1,4 +1,4 @@
--module(test_2).
+-module(test_3).
 
 -compile(export_all).
 
@@ -25,50 +25,26 @@ battle()->
 
     %Divide 10 functions: 
     whereare(),
-    myLoop(F3,10),
-    status(fastTest),
-    myLoop(F5,100000),
-    status(sec0),
-    timer:sleep(1000),
-    status(sec1),
-    timer:sleep(1000),
-    status(sec2),
-    timer:sleep(1000),
-    status(sec3),
-    timer:sleep(1000),
-    status(sec4),
-    timer:sleep(1000),
-    status(sec5),
-    timer:sleep(1000),
-    status(sec6),
-    timer:sleep(1000),
-    status(sec7),
-    timer:sleep(1000),
-    status(sec8),
-    timer:sleep(1000),
-    status(sec9),
-    timer:sleep(1000),
-    status(sec10_end_test),
-    timer:sleep(1000),
-    status(sec11),
-    timer:sleep(1000),
-    status(sec12),    
+	myLoop(F5,20),
+	status(40),
     ok.
                 
 myLoop(_F,0)->
     ok;
-
 myLoop(F,Times)->
     loadBalance:calcFun(self(),F,make_ref()),
     myLoop(F,Times-1).
 
-
+sendExit()->
+	FE = fun()-> exit(2) end,
+	loadBalance:calcFun(self(), FE, ref),
+	ok.
 
 main()->
     start(),
     battle(),
     stop(),
-    c:flush(),
+    % c:flush(),
     ok_main.
 
 
